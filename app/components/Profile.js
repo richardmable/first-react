@@ -5,6 +5,7 @@ var UserProfile = require('./Github/UserProfile');
 var Notes = require('./Notes/Notes');
 var ReactFireMixIn = require('reactfire');
 var Firebase = require('firebase');
+var helpers = require('../utils/helpers');
 
 
 var Profile = React.createClass({
@@ -22,6 +23,14 @@ var Profile = React.createClass({
 		this.ref = new Firebase('https://flickering-inferno-4346.firebaseio.com/');
 		var childRef = this.ref.child(this.props.params.username);
 		this.bindAsArray(childRef, 'notes');
+		
+		helpers.getGithubInfo(this.props.params.username)
+			.then(function(data){
+				this.setState({
+					bio: data.bio,
+					repos: data.repos
+				})
+			}.bind(this))
 	},
 	componentWillUnmount: function() {
 		this.unbind('notes');
